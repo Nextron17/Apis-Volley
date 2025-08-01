@@ -1,89 +1,55 @@
 package com.juliansam.apivoley;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private PostAdapter postAdapter;
-    private List<Post> postList;
-    private RequestQueue requestQueue;
-
-    private static final String API_URL = "https://jsonplaceholder.typicode.com/posts";
+    private Button buttonGet;
+    private Button buttonPost;
+    private Button buttonPut;
+    private Button buttonDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        postList = new ArrayList<>();
-        postAdapter = new PostAdapter(postList);
-        recyclerView.setAdapter(postAdapter);
+        buttonGet = findViewById(R.id.buttonGet);
+        buttonPost = findViewById(R.id.buttonPost);
+        buttonPut = findViewById(R.id.buttonPut);
+        buttonDelete = findViewById(R.id.buttonDelete);
 
-        requestQueue = Volley.newRequestQueue(this);
+        buttonGet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, GetActivity.class));
+            }
+        });
 
-        fetchPosts();
-    }
+        buttonPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, PostActivity.class));
+            }
+        });
 
-    private void fetchPosts() {
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                API_URL,
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject postObject = response.getJSONObject(i);
+        buttonPut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, PutActivity.class));
+            }
+        });
 
-                                int userId = postObject.getInt("userId");
-                                int id = postObject.getInt("id");
-                                String title = postObject.getString("title");
-                                String body = postObject.getString("body");
-
-                                Post post = new Post(userId, id, title, body);
-                                postList.add(post);
-                            }
-                            postAdapter.notifyDataSetChanged();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(MainActivity.this, "Error al procesar los datos.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Manejamos errores de red
-                        error.printStackTrace();
-                        Toast.makeText(MainActivity.this, "Error de red. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-        requestQueue.add(jsonArrayRequest);
+        buttonDelete.setOnClickListener(new View.OnClickListener() { // Listener para DELETE
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, DeleteActivity.class));
+            }
+        });
     }
 }
